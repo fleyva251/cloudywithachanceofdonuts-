@@ -1,11 +1,28 @@
 // bring express in
 const express = require('express');
 const app = express();
+const mysql = require('mysql')
 const port = 3000;
+
+//connect to database using mysql.js
+let connection = mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password: 'password',
+    database: 'mcsp02donuts'
+});
+
+connection.connect(function(err){
+    if(err){
+        console.error('there was an error ' + err) 
+    } 
+    console.log('connected to mcsp02donuts')
+})
+
 
 //routes
 app.get('/',(req,res) => {
-    res.send('Welcome To Donut Land UwU')
+   res.send('Welcome to donut land UwU')
 });
 
 //donut routes
@@ -18,7 +35,10 @@ app.post('/donuts', (req,res) => {
 //READ
 //GET all donuts 
 app.get('/donuts', (req,res) => {
-    res.send('Sorry no donuts yet :(')
+    connection.query('SELECT * FROM donuts',function(error,results,fields){
+        if(error) throw error;
+        res.json(results)
+    });
 });
 //GET single donut
 app.get('/donuts/:id', (req,res) => {
